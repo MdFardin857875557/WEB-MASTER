@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Channel Grid with Video Player</title>
+    <style>
+        /* Basic Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+        }
+
+        /* Toolbar */
+        .toolbar {
+            background-color: #000;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            border-bottom: 2px solid #333;
+        }
+
+/* Welcome text box styling */
+.welcome-box {
+    background-color: #333;
+    padding: 10px;
+    border: 2px solid Green;
+    margin-top: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Animated title style */
+.welcome-text {
+    display: inline-block;
+    white-space: nowrap;
+    animation: marquee 15s linear infinite;
+    font-size: 20px;
+    color: #00ff00;
+    font-weight: bold;
+}
+
+/* Animation keyframe */
+@keyframes marquee {
+    0% { transform: translateX(100%); }
+    100% { transform: translateX(-100%); }
+}
+
+        /* Search Bar */
+        .search-bar {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .search-bar input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+        }
+
+        .search-bar button {
+            padding: 10px 20px;
+            background-color: red;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Channel Cards Container */
+        .channel-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            padding: 20px;
+        }
+
+        .channel-card {
+            background-color: #333;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .channel-card img {
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+        }
+
+        .channel-card p {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        /* Responsive Mobile View */
+        @media (max-width: 600px) {
+            .search-bar input[type="text"] {
+                width: 70%;
+            }
+
+            .search-bar button {
+                width: auto;
+            }
+        }
+
+        /* Video Player Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+        }
+
+ .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            overflow: auto;
+        }
+        .modal-content {
+            margin: 5% auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 800px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 25px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        iframe {
+            width: 100%;
+            height:600px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toolbar -->
+    <div class="toolbar">FR BD TV</div>
+
+<!-- Welcome Text -->
+    <div class="welcome-box">
+        <div class="welcome-text">(FR SUPER FLASH 3388) AND (FR TV CHANNEL)</div>
+    </div>
+
+
+
+    <!-- Channel Cards Container -->
+    <div class="channel-container">
+        <div class="channel-card" onclick="openPlayer('https://fardin-king588.github.io/frtv-9/Index.html')">
+            <img src="https://i.postimg.cc/L8T4Kv3b/images-24.jpg" alt="Channel 1">
+            <p>Independence TV</p>
+        </div>
+        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Deepto-TV//Index.html')">
+            <img src="https://i.postimg.cc/rp551B1P/IMG-20241010-235703.jpg" alt="Channel 2">
+            <p>Deepto TV</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Jamuna-TV/Index.html')">
+            <img src="https://i.postimg.cc/mgZHk93s/IMG-20241104-192126.jpg" alt="Channel 3">
+            <p>Jamuna TV</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Somoy-TV/Index.html')">
+            <img src="https://i.postimg.cc/jSyH9f60/somoy-logo-big-2-8c0bf75.png" alt="Channel 3">
+            <p>SOMOY TV</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-AATH/Index.html')">
+            <img src="https://i.postimg.cc/Bb3JQdLn/Sony-Aath-new.png" alt="Channel 3">
+            <p>Sony AATH</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-MAX/Index.html')">
+            <img src="https://i.postimg.cc/SNXgxJ4j/Sony-Max-new-1.png" alt="Channel 3">
+            <p>Sony MAX</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/9XM/Index.html')">
+            <img src="https://i.postimg.cc/fbhsvGCj/9xmm.jpg" alt="Channel 3">
+            <p>9XM</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sangeet-Bangla/Index.html')">
+            <img src="https://i.postimg.cc/0Qzq59yv/images-33.jpg" alt="Channel 3">
+            <p>Sangeet Bangla</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-TEN-2-HD/Index.html')">
+            <img src="https://i.postimg.cc/hv0sHdRt/IMG-20241104-210617.png" alt="Channel 3">
+            <p>SONY TEN 2 HD</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-TEN-3-HD/Index.html')">
+            <img src="https://i.postimg.cc/2698THVk/IMG-20241104-211508.png" alt="Channel 3">
+            <p>SONY TEN 3 HD</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Discovery-Kids/Index.html')">
+            <img src="https://i.postimg.cc/kgg9yTM7/1728655063192.jpg" alt="Channel 3">
+            <p>Discovery Kids</p>
+        </div>
+        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Gubbara/Index.html')">
+            <img src="https://i.postimg.cc/CK44Z0XZ/1730723482423.jpg" alt="Channel 3">
+            <p>Gubbara</p>
+   </div>
+        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-yay/Index.html')">
+            <img src="https://i.postimg.cc/KjXGM6dT/channels4-profile-4.jpg" alt="Channel 3">
+            <p>Sony yay</p>
+        </div>
+<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Discovery/Index.html')">
+            <img src="https://i.postimg.cc/fRvKyXV7/channels4-profile-6.jpg" alt="Channel 3">
+            <p>Discovery Channel</p>
+        </div>
+        </div>
+   </div>
+
+    <!-- Modal for Video Player -->
+    <div id="videoModal" class="modal">
+        <div class="">
+            <span class="close" onclick="closePlayer()">×</span>
+            <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+        </div>
+    </div>
+<script>
+        function openPlayer(channelUrl) {
+            var modal = document.getElementById("videoModal");
+            var player = document.getElementById("videoPlayer");
+            player.src = channelUrl;
+            modal.style.display = "block";
+        }
+
+        function closePlayer() {
+            var modal = document.getElementById("videoModal");
+            var player = document.getElementById("videoPlayer");
+            player.src = ""; // Stop the video when modal is closed
+            modal.style.display = "none";
+        }
+
+        window.onclick = function(event) {
+            var modal = document.getElementById("videoModal");
+            if (event.target == modal) {
+                closePlayer();
+            }
+        }
+    </script>
+</body>
+</html>
