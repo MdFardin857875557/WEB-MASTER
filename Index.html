@@ -1,276 +1,272 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="bn">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Channel Grid with Video Player</title>
+    <title>Channels</title>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
     <style>
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
+            margin: 0;
             font-family: Arial, sans-serif;
-            background-color: #000;
+            background-color: #181818;
             color: #fff;
         }
 
-        /* Toolbar */
+        /* উপরের টুলবার */
         .toolbar {
-            background-color: #000;
-            color: #fff;
+            background-color: #333;
             padding: 15px;
             text-align: center;
             font-size: 24px;
             font-weight: bold;
-            border-bottom: 2px solid #333;
+            border-bottom: 1px solid #444;
         }
 
-/* Welcome text box styling */
-.welcome-box {
-    background-color: #333;
-    padding: 10px;
-    border: 2px solid Green;
-    margin-top: 10px;
-    overflow: hidden;
-    position: relative;
-}
+        /* ক্যাটাগরি কনটেইনার */
+        .category-container, .channel-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            padding: 20px;
+        }
 
-/* Animated title style */
-.welcome-text {
-    display: inline-block;
-    white-space: nowrap;
-    animation: marquee 15s linear infinite;
-    font-size: 20px;
-    color: #00ff00;
-    font-weight: bold;
-}
+        /* ক্যাটাগরি এবং চ্যানেল কার্ড */
+        .category, .channel {
+            background-color: #444;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s, background-color 0.3s;
+        }
 
-/* Animation keyframe */
-@keyframes marquee {
-    0% { transform: translateX(100%); }
-    100% { transform: translateX(-100%); }
-}
+        .category:hover, .channel:hover {
+            transform: scale(1.05);
+            background-color:#555
+           ;
+        }
 
-        /* Search Bar */
-        .search-bar {
+        .category img, .channel img {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .category p, .channel p {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        /* চ্যানেল কনটেইনার লুকানোর জন্য */
+        .channel-container {
+            display: none;
+        }
+
+        /* ব্যাক বাটনের স্টাইল */
+        .back-button {
+            background-color: #555;
+            color: #fff;
+            padding: 10px 20px;
+            text-align: center;
+            font-size: 16px;
+            margin-top: 20px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .back-button:hover {
+            background-color: #000000;
+        }
+
+        /* ব্যাক বাটন সেন্টারে রাখা */
+        .back-button-container {
             display: flex;
             justify-content: center;
-            margin: 20px 0;
+            margin-top: 20px;
         }
 
-        .search-bar input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            border-radius: 5px;
-            border: none;
-        }
-
-        .search-bar button {
-            padding: 10px 20px;
-            background-color: red;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-left: 10px;
-        }
-
-        /* Channel Cards Container */
-        .channel-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 20px;
+        .video-player {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-51%, -50%);
+            background-color: black;
             padding: 20px;
-        }
-
-        .channel-card {
-            background-color: #333;
             border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 90%;
         }
-
-        .channel-card img {
+        .video-player video {
             width: 100%;
             height: auto;
-            border-radius: 10px;
         }
-
-        .channel-card p {
-            margin-top: 10px;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        /* Responsive Mobile View */
-        @media (max-width: 600px) {
-            .search-bar input[type="text"] {
-                width: 70%;
-            }
-
-            .search-bar button {
-                width: auto;
-            }
-        }
-
-        /* Video Player Modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.8);
-            justify-content: center;
-            align-items: center;
-        }
-
- .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            overflow: auto;
-        }
-        .modal-content {
-            margin: 5% auto;
-            padding: 20px;
-            background-color: #fff;
-            border-radius: 10px;
-            width: 80%;
-            max-width: 800px;
-        }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 25px;
-            font-weight: bold;
-        }
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
+        .close-btn {
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
             cursor: pointer;
+            border: none;
+            margin-top: 20px;
+            text-align: center;
+            display: block;
+            width: 100%;
+            border-radius: 5px;
         }
         iframe {
             width: 100%;
-            height:600px;
+            height:591px;
         }
+
     </style>
 </head>
 <body>
 
-    <!-- Toolbar -->
+    <!-- টুলবার -->
     <div class="toolbar">FR BD TV</div>
 
-<!-- Welcome Text -->
-    <div class="welcome-box">
-        <div class="welcome-text">(FR SUPER FLASH 3388) AND (FR TV CHANNEL)</div>
-    </div>
-
-
-
-    <!-- Channel Cards Container -->
-    <div class="channel-container">
-        <div class="channel-card" onclick="openPlayer('https://fardin-king588.github.io/frtv-9/Index.html')">
-            <img src="https://i.postimg.cc/L8T4Kv3b/images-24.jpg" alt="Channel 1">
+     <!-- ক্যাটাগরি কনটেইনার -->
+    <div class="category-container">
+        <!-- প্রথম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://fardin-king588.github.io/frtv-9/Index.html')">
+            <img src="https://i.postimg.cc/L8T4Kv3b/images-24.jpg" alt="channel 1">
             <p>Independence TV</p>
         </div>
-        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Deepto-TV//Index.html')">
-            <img src="https://i.postimg.cc/rp551B1P/IMG-20241010-235703.jpg" alt="Channel 2">
+        <!-- দ্বিতীয় ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Deepto-TV//Index.html')">
+            <img src="https://i.postimg.cc/rp551B1P/IMG-20241010-235703.jpg" alt="channel 2">
             <p>Deepto TV</p>
         </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Jamuna-TV/Index.html')">
-            <img src="https://i.postimg.cc/mgZHk93s/IMG-20241104-192126.jpg" alt="Channel 3">
+        <!-- তৃতীয় ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Jamuna-TV/Index.html')">
+            <img src="https://i.postimg.cc/mgZHk93s/IMG-20241104-192126.jpg" alt="channel 3">
             <p>Jamuna TV</p>
         </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Somoy-TV/Index.html')">
-            <img src="https://i.postimg.cc/jSyH9f60/somoy-logo-big-2-8c0bf75.png" alt="Channel 3">
-            <p>SOMOY TV</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-AATH/Index.html')">
-            <img src="https://i.postimg.cc/Bb3JQdLn/Sony-Aath-new.png" alt="Channel 3">
+        <!-- চতুর্থ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Somoy-TV/Index.html')">
+            <img src="https://i.postimg.cc/7YqpjGZT/IMG-20241107-011851.jpg" alt="channel 4">
+            <p>Somoy TV</p>
+</div>
+        <!-- পঞ্চম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sony-AATH/Index.html')">
+            <img src="https://i.postimg.cc/Bb3JQdLn/Sony-Aath-new.png" alt="channel 5">
             <p>Sony AATH</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-MAX/Index.html')">
-            <img src="https://i.postimg.cc/SNXgxJ4j/Sony-Max-new-1.png" alt="Channel 3">
+</div>
+        <!-- ষষ্ঠ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sony-MAX/Index.html')">
+            <img src="https://i.postimg.cc/SNXgxJ4j/Sony-Max-new-1.png" alt="channel 6">
             <p>Sony MAX</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/9XM/Index.html')">
-            <img src="https://i.postimg.cc/fbhsvGCj/9xmm.jpg" alt="Channel 3">
+</div>
+        <!-- সপ্তম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/9XM/Index.html')">
+            <img src="https://i.postimg.cc/fbhsvGCj/9xmm.jpg" alt="channel 7">
             <p>9XM</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sangeet-Bangla/Index.html')">
-            <img src="https://i.postimg.cc/0Qzq59yv/images-33.jpg" alt="Channel 3">
+</div>
+        <!-- অষ্টম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sangeet-Bangla/Index.html')">
+            <img src="https://i.postimg.cc/0Qzq59yv/images-33.jpg" alt="channel 8">
             <p>Sangeet Bangla</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-TEN-2-HD/Index.html')">
-            <img src="https://i.postimg.cc/hv0sHdRt/IMG-20241104-210617.png" alt="Channel 3">
+</div>
+        <!-- নবম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sony-TEN-2-HD/Index.html')">
+            <img src="https://i.postimg.cc/qRyvDhM5/IMG-20241107-015027.png" alt="channel 9">
             <p>SONY TEN 2 HD</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-TEN-3-HD/Index.html')">
-            <img src="https://i.postimg.cc/2698THVk/IMG-20241104-211508.png" alt="Channel 3">
+</div>
+        <!-- নবম ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sony-TEN-3-HD/Index.html')">
+            <img src="https://i.postimg.cc/tJzCyK6d/IMG-20241107-014944.png" alt="channel 10">
             <p>SONY TEN 3 HD</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Discovery-Kids/Index.html')">
-            <img src="https://i.postimg.cc/kgg9yTM7/1728655063192.jpg" alt="Channel 3">
-            <p>Discovery Kids</p>
-        </div>
-        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Gubbara/Index.html')">
-            <img src="https://i.postimg.cc/CK44Z0XZ/1730723482423.jpg" alt="Channel 3">
+</div>
+        <!-- একাদশ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Discovery-Kids/Index.html')">
+            <img src="https://i.postimg.cc/kgg9yTM7/1728655063192.jpg" alt="channel 11">
+            <p>Discovery kids</p>
+</div>
+        <!-- দ্বাদশ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Gubbara/Index.html')">
+            <img src="https://i.postimg.cc/CK44Z0XZ/1730723482423.jpg" alt="channel 12">
             <p>Gubbara</p>
-   </div>
-        <div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Sony-yay/Index.html')">
-            <img src="https://i.postimg.cc/KjXGM6dT/channels4-profile-4.jpg" alt="Channel 3">
-            <p>Sony yay</p>
-        </div>
-<div class="channel-card" onclick="openPlayer('https://mdfardin857875557.github.io/Discovery/Index.html')">
-            <img src="https://i.postimg.cc/fRvKyXV7/channels4-profile-6.jpg" alt="Channel 3">
+</div>
+        <!-- এএ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Sony-yay/Index.html')">
+            <img src="https://i.postimg.cc/KjXGM6dT/channels4-profile-4.jpg" alt="channel 13">
+            <p>Sony Yay</p>
+</div>
+        <!-- এএ ক্যাটাগরি -->
+        <div class="category" onclick="playVideo('https://mdfardin857875557.github.io/Discovery/Index.html')">
+            <img src="https://i.postimg.cc/fRvKyXV7/channels4-profile-6.jpg" alt="channel 14">
             <p>Discovery Channel</p>
         </div>
-        </div>
-   </div>
-
-    <!-- Modal for Video Player -->
-    <div id="videoModal" class="modal">
-        <div class="">
-            <span class="close" onclick="closePlayer()">×</span>
-            <iframe id="videoPlayer" src="" frameborder="0" allowfullscreen></iframe>
+    </div>
+    <!-- ভিডিও প্লেয়ার -->
+    <div class="video-player" id="videoPlayer">
+        <iframe id="videoFrame" src="" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        <video id="hlsPlayer" controls></video>
+        <div class="back-button-container">
+            <div class="back-button" onclick="closeVideo()">Close Video</div>
         </div>
     </div>
-<script>
-        function openPlayer(channelUrl) {
-            var modal = document.getElementById("videoModal");
-            var player = document.getElementById("videoPlayer");
-            player.src = channelUrl;
-            modal.style.display = "block";
+
+    <script>
+        function showChannels(categoryId) {
+            // সব ক্যাটাগরি লুকানো
+            document.querySelector('.category-container').style.display = 'none';
+            // সব চ্যানেল কনটেইনার লুকানো
+            document.querySelectorAll('.channel-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            // নির্দিষ্ট চ্যানেল কনটেইনার শো করা
+            document.getElementById(categoryId).style.display = 'grid';
         }
 
-        function closePlayer() {
-            var modal = document.getElementById("videoModal");
-            var player = document.getElementById("videoPlayer");
-            player.src = ""; // Stop the video when modal is closed
-            modal.style.display = "none";
+        function showCategories() {
+            // চ্যানেলগুলো লুকানো
+            document.querySelectorAll('.channel-container').forEach(container => {
+                container.style.display = 'none';
+            });
+            // ক্যাটাগরি গুলো দেখানো
+            document.querySelector('.category-container').style.display = 'grid';
         }
 
-        window.onclick = function(event) {
-            var modal = document.getElementById("videoModal");
-            if (event.target == modal) {
-                closePlayer();
+        function playVideo(videoUrl) {
+            // ভিডিও প্লেয়ার শো করা
+            document.getElementById('videoPlayer').style.display = 'block';
+
+            // চেক করা যদি m3u8 লিঙ্ক হয়
+            if (videoUrl.endsWith('.m3u8')) {
+                const video = document.getElementById('hlsPlayer');
+                const iframe = document.getElementById('videoFrame');
+                iframe.style.display = 'none';
+                video.style.display = 'block';
+                
+                if (Hls.isSupported()) {
+                    const hls = new Hls();
+                    hls.loadSource(videoUrl);
+                    hls.attachMedia(video);
+                } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+                    video.src = videoUrl;
+                }
+            } else {
+                // যদি YouTube লিঙ্ক হয়
+                const iframe = document.getElementById('videoFrame');
+                const video = document.getElementById('hlsPlayer');
+                video.style.display = 'none';
+                iframe.style.display = 'block';
+                iframe.src = videoUrl;
             }
         }
+
+        function closeVideo() {
+            document.getElementById('videoPlayer').style.display = 'none';
+            document.getElementById('videoFrame').src = '';
+            document.getElementById('hlsPlayer').pause();
+        }
     </script>
+
 </body>
 </html>
